@@ -1,6 +1,6 @@
 {
-  "name": "КПК Зони",
-  "short_name": "КПК Зони",
+  "name": "Польовий Модуль",
+  "short_name": "Польовий Модуль",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#100d08",
