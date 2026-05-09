@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#15100a" />
+  <title>КПК Зони — MVP</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="scanlines"></div>
+  <div id="noise"></div>
+
+  <main class="device" id="app">
+    <header class="phonebar">
+      <span class="mono">⌁ <span id="clock">14:37</span></span>
+      <span class="phone-icons">▂▃▅ ▰ ◱</span>
+    </header>
+
+    <section class="title-plate">
+      <span class="plate-mark">➜</span>
+      <h1>КПК ЗОНИ</h1>
+      <span class="plate-mark">➜</span>
+    </section>
+
+    <section class="identity-panel">
+      <div class="portrait" aria-label="Портрет сталкера">
+        <div class="portrait-glow"></div>
+        <div class="stalker-figure">
+          <div class="hood"></div>
+          <div class="mask">
+            <span></span><span></span>
+          </div>
+          <div class="body-rig"></div>
+        </div>
+      </div>
+
+      <div class="bio-card">
+        <div class="bio-bg"></div>
+        <div class="bio-top">
+          <h2 id="characterName">Лис</h2>
+          <div class="rad-symbol">☢</div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-line">
+            <span class="stat-icon">♥</span>
+            <span class="stat-name">Здоров’я:</span>
+            <strong><span id="hpNow">8</span> / <span id="hpMax">12</span></strong>
+            <div class="dots" id="hpDots"></div>
+          </div>
+
+          <div class="stat-line">
+            <span class="stat-icon">♟</span>
+            <span class="stat-name">Втома:</span>
+            <strong><span id="fatigueNow">2</span> / 5</strong>
+            <div class="dots" id="fatigueDots"></div>
+          </div>
+
+          <div class="stat-line">
+            <span class="stat-icon">☢</span>
+            <span class="stat-name">Радіація:</span>
+            <strong id="radiationNow">1</strong>
+            <div class="dots" id="radDots"></div>
+          </div>
+
+          <div class="stat-line">
+            <span class="stat-icon bullets">▮▮▮</span>
+            <span class="stat-name">Набої:</span>
+            <strong id="ammoNow">15</strong>
+            <div class="dots ammo-dots" id="ammoDots"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen active" data-screen="state">
+      <div class="section-title"><span>⚙</span><h3>ШВИДКІ ДІЇ</h3></div>
+      <div class="quick-actions">
+        <button class="action-tile" data-action="shoot_aimed">
+          <span class="tile-icon">◎</span>
+          <span>Точно</span>
+          <small>1d20 +2 · -1 набій</small>
+        </button>
+        <button class="action-tile" data-action="shoot_normal">
+          <span class="tile-icon">⊙</span>
+          <span>Нормально</span>
+          <small>2d20 · -2 набої</small>
+        </button>
+        <button class="action-tile danger" data-action="shoot_burst">
+          <span class="tile-icon">▮▮▮</span>
+          <span>Черга</span>
+          <small>3d20 -2 · -3 набої</small>
+        </button>
+        <button class="action-tile" data-action="look">
+          <span class="tile-icon">◉</span>
+          <span>Оглянути</span>
+          <small>1d20 + Сприйняття</small>
+        </button>
+        <button class="action-tile" data-open="inventory">
+          <span class="tile-icon">▣</span>
+          <span>Інвентар</span>
+          <small>Речі й спорядження</small>
+        </button>
+      </div>
+
+      <div class="section-title"><span>☠</span><h3>Вороги</h3></div>
+      <div class="enemy-list" id="stateEnemies"></div>
+
+      <div class="section-title"><span>◉</span><h3>Оточення</h3></div>
+      <article class="scene-card compact">
+        <div class="scene-image"><span>▧</span></div>
+        <div>
+          <h4 id="sceneNameShort">Старий блокпост</h4>
+          <p id="sceneDescShort">Туман, бетонні плити, іржава вантажівка.</p>
+        </div>
+      </article>
+
+      <div class="roll-result" id="rollResult" hidden></div>
+    </section>
+
+    <section class="screen" data-screen="environment">
+      <div class="section-title"><span>◉</span><h3>Оточення</h3></div>
+      <article class="scene-card large">
+        <div class="scene-image wide"><span>☣</span></div>
+        <h4 id="sceneName">Старий блокпост</h4>
+        <p id="sceneDescription"></p>
+      </article>
+      <div class="info-grid">
+        <div class="paper-panel">
+          <h4>Звуки</h4>
+          <p id="sceneSounds"></p>
+        </div>
+        <div class="paper-panel">
+          <h4>Запахи</h4>
+          <p id="sceneSmells"></p>
+        </div>
+        <div class="paper-panel full">
+          <h4>Важливі об’єкти</h4>
+          <ul id="sceneObjects"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="enemies">
+      <div class="section-title"><span>☠</span><h3>Видимі вороги</h3></div>
+      <div id="enemyCards" class="enemy-cards"></div>
+    </section>
+
+    <section class="screen" data-screen="inventory">
+      <div class="section-title"><span>▣</span><h3>Інвентар</h3></div>
+      <div id="inventoryList" class="inventory-list"></div>
+    </section>
+
+    <section class="screen" data-screen="journal">
+      <div class="section-title"><span>▤</span><h3>Журнал КПК</h3></div>
+      <div class="journal-controls">
+        <button class="metal-btn" id="addKpkMsg">КПК-попередження</button>
+        <button class="metal-btn" id="clearJournal">Очистити</button>
+      </div>
+      <div id="journalList" class="journal-list"></div>
+    </section>
+
+    <section class="screen" data-screen="master">
+      <div class="section-title"><span>⚙</span><h3>Майстер</h3></div>
+
+      <details class="gm-panel" open>
+        <summary>Стан персонажа</summary>
+        <div class="control-grid">
+          <label>Ім’я <input id="gmName" /></label>
+          <label>HP <input id="gmHp" type="number" min="0" /></label>
+          <label>Макс. HP <input id="gmHpMax" type="number" min="1" /></label>
+          <label>Втома <input id="gmFatigue" type="number" min="0" max="5" /></label>
+          <label>Радіація <input id="gmRad" type="number" min="0" max="7" /></label>
+          <label>Набої <input id="gmAmmo" type="number" min="0" /></label>
+        </div>
+        <div class="button-row">
+          <button class="metal-btn" id="savePlayer">Зберегти стан</button>
+          <button class="metal-btn danger" data-delta-hp="-1">-1 HP</button>
+          <button class="metal-btn" data-delta-hp="1">+1 HP</button>
+          <button class="metal-btn" data-delta-fatigue="1">+1 Втома</button>
+          <button class="metal-btn danger" data-delta-fatigue="-1">-1 Втома</button>
+        </div>
+      </details>
+
+      <details class="gm-panel">
+        <summary>Сцена</summary>
+        <label>Назва <input id="gmSceneName" /></label>
+        <label>Опис <textarea id="gmSceneDescription" rows="4"></textarea></label>
+        <label>Звуки <textarea id="gmSceneSounds" rows="2"></textarea></label>
+        <label>Запахи <textarea id="gmSceneSmells" rows="2"></textarea></label>
+        <label>Об’єкти через кому <textarea id="gmSceneObjects" rows="2"></textarea></label>
+        <button class="metal-btn" id="saveScene">Оновити сцену</button>
+      </details>
+
+      <details class="gm-panel">
+        <summary>Вороги</summary>
+        <div id="gmEnemies"></div>
+        <button class="metal-btn" id="addEnemy">Додати ворога</button>
+      </details>
+
+      <details class="gm-panel">
+        <summary>Інвентар</summary>
+        <div id="gmInventory"></div>
+        <button class="metal-btn" id="addItem">Додати річ</button>
+      </details>
+
+      <details class="gm-panel">
+        <summary>Дані</summary>
+        <div class="button-row">
+          <button class="metal-btn" id="exportData">Експорт JSON</button>
+          <label class="metal-btn file-btn">Імпорт JSON<input id="importData" type="file" accept="application/json" /></label>
+          <button class="metal-btn danger" id="resetData">Скинути MVP</button>
+        </div>
+        <textarea id="exportBox" rows="6" placeholder="Тут з’явиться JSON для перенесення стану."></textarea>
+      </details>
+    </section>
+
+    <nav class="bottom-nav" aria-label="Навігація">
+      <button class="nav-btn active" data-target="state"><span>♥</span><b>Стан</b></button>
+      <button class="nav-btn" data-target="environment"><span>◉</span><b>Оточення</b></button>
+      <button class="nav-btn" data-target="enemies"><span>☠</span><b>Вороги</b></button>
+      <button class="nav-btn" data-target="journal"><span>▤</span><b>Журнал</b></button>
+      <button class="nav-btn" data-target="master"><span>⚙</span><b>Майстер</b></button>
+    </nav>
+
+    <div class="toast" id="toast" hidden></div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

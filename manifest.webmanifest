@@ -1,0 +1,10 @@
+{
+  "name": "КПК Зони",
+  "short_name": "КПК Зони",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#100d08",
+  "theme_color": "#15100a",
+  "description": "Мобільний веб-додаток для S.T.A.L.K.E.R.-подібної настільної гри.",
+  "icons": []
+}
